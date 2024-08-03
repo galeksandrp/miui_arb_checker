@@ -1,0 +1,50 @@
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+
+name: Python application
+
+on:
+  push
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: "https://bn.d.miui.com/OS1.0.3.0.UNHRUXM/sapphiren_ru_global_images_OS1.0.3.0.UNHRUXM_20240705.0000.00_14.0_ru_94ad7ac668.tgz"
+            fw: "https://github.com/galeksandrp/xiaomi-flashable-firmware-creator/releases/download/sapphiren/fw_sapphiren_miui_SAPPHIRENRUGlobal_OS1.0.3.0.UNHRUXM_d295f2f94c_14.0.zip"
+          - os: "https://bn.d.miui.com/OS1.0.2.0.UNHRUXM/sapphiren_ru_global_images_OS1.0.2.0.UNHRUXM_20240521.0000.00_14.0_ru_e1160d2587.tgz"
+            fw: "https://github.com/galeksandrp/xiaomi-flashable-firmware-creator/releases/download/sapphiren/fw_sapphiren_miui_SAPPHIRENRUGlobal_OS1.0.2.0.UNHRUXM_1e3350df68_14.0.zip"
+          - os: "https://bn.d.miui.com/OS1.0.1.0.UNHRUXM/sapphiren_ru_global_images_OS1.0.1.0.UNHRUXM_20240419.0000.00_14.0_ru_e69e5e90c8.tgz"
+            fw: "https://github.com/galeksandrp/xiaomi-flashable-firmware-creator/releases/download/sapphiren/fw_sapphiren_miui_SAPPHIRENRUGlobal_OS1.0.1.0.UNHRUXM_988a587097_14.0.zip"
+          - os: "https://bn.d.miui.com/V14.0.7.0.TNHRUXM/sapphiren_ru_global_images_V14.0.7.0.TNHRUXM_20240605.0000.00_13.0_ru_931f97ff42.tgz"
+            fw: "https://github.com/galeksandrp/xiaomi-flashable-firmware-creator/releases/download/sapphiren/fw_sapphiren_miui_SAPPHIRENRUGlobal_V14.0.7.0.TNHRUXM_e9c095a828_13.0.zip"
+          - os: "https://bn.d.miui.com/V14.0.6.0.TNHRUXM/sapphiren_ru_global_images_V14.0.6.0.TNHRUXM_20240222.0000.00_13.0_ru_028cb5427a.tgz"
+            fw: "https://github.com/galeksandrp/xiaomi-flashable-firmware-creator/releases/download/sapphiren/fw_sapphiren_miui_SAPPHIRENRUGlobal_V14.0.6.0.TNHRUXM_c8da74a8fd_13.0.zip"
+          - os: "https://bn.d.miui.com/V14.0.3.0.TNHRUXM/sapphiren_ru_global_images_V14.0.3.0.TNHRUXM_20240122.0000.00_13.0_ru_de6560dc3a.tgz"
+            fw: "https://github.com/galeksandrp/xiaomi-flashable-firmware-creator/releases/download/sapphiren/fw_sapphiren_miui_SAPPHIRENRUGlobal_V14.0.3.0.TNHRUXM_6f52c587b4_13.0.zip"
+          - os: "https://bn.d.miui.com/V14.0.1.0.TNHRUXM/sapphiren_ru_global_images_V14.0.1.0.TNHRUXM_20231124.0000.00_13.0_ru_30bf7aa39d.tgz"
+            fw: "https://github.com/galeksandrp/xiaomi-flashable-firmware-creator/releases/download/sapphiren/fw_sapphiren_miui_SAPPHIRENRUGlobal_V14.0.1.0.TNHRUXM_2362c06399_13.0.zip"
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.10"
+    - run: mkdir -p custom
+
+    - run: wget "${{ matrix.os }}"
+      working-directory: custom
+    - run: python3 miui_arb_checker.py custom/*.tgz
+    - run: rm -rf custom/*.tgz
+
+    - run: wget "${{ matrix.fw }}"
+      working-directory: custom
+    - run: python3 miui_arb_checker.py custom/*.zip
+    - run: rm -rf custom/*.zip

@@ -5,6 +5,7 @@ MIUI Anti-Rollback checker
 import codecs
 import re
 import tarfile
+import os
 from zipfile import ZipFile
 from os import makedirs, path
 from shutil import rmtree
@@ -61,7 +62,8 @@ def extract_tar(file):
     """
     with tarfile.open(file, 'r') as tar_file:
         files = [i for i in tar_file.getnames() if 'flash_all.sh' in i][0]
-        tar_file.extractall('tmp', members=[tar_file.getmember(files)])
+        anti_version = [i for i in tar_file.getnames() if 'anti_version.txt' in i][0]
+        tar_file.extractall('tmp', members=[tar_file.getmember(files), tar_file.getmember(anti_version)])
         print('flashing script extracted successfully.')
 
 
@@ -108,6 +110,11 @@ def read_arb_number(file):
         if not arb:
             print('No ARB detected!')
         else:
+            for anti_version in glob("tmp/*/images/anti_version.txt"):
+                with open(anti_version, 'r') as txt:
+                    print('ARB index is: ' + txt.readline())
+                    return
+
             print('ARB index is: ' + arb.split('=')[1])
 
 
